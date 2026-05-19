@@ -514,11 +514,35 @@ function setView(showPreview) {
   window.scrollTo(0, 0);
 }
 
+function closeMenu() {
+  document.body.classList.remove("menu-open");
+  document.getElementById("menu-btn").setAttribute("aria-expanded", "false");
+}
+
 function bindMobile() {
-  document.getElementById("mtab-edit").onclick = () => setView(false);
-  document.getElementById("mtab-prev").onclick = () => setView(true);
+  document.getElementById("mtab-edit").onclick = () => { closeMenu(); setView(false); };
+  document.getElementById("mtab-prev").onclick = () => { closeMenu(); setView(true); };
+
+  const menuBtn = document.getElementById("menu-btn");
+  menuBtn.onclick = () => {
+    const open = document.body.classList.toggle("menu-open");
+    menuBtn.setAttribute("aria-expanded", String(open));
+  };
+  // close when tapping outside the top bar
+  document.addEventListener("click", (e) => {
+    if (!document.body.classList.contains("menu-open")) return;
+    if (!e.target.closest(".topbar")) closeMenu();
+  });
+  // close after an action button (keep open for template/font/color tweaks)
+  ["btn-pdf", "btn-export", "btn-import", "btn-new"].forEach((id) =>
+    document.getElementById(id).addEventListener("click", closeMenu)
+  );
+
   let t;
-  window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(fitPreview, 120); });
+  window.addEventListener("resize", () => {
+    clearTimeout(t);
+    t = setTimeout(() => { if (!isMobile()) closeMenu(); fitPreview(); }, 120);
+  });
   window.addEventListener("orientationchange", () => setTimeout(fitPreview, 200));
 }
 
