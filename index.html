@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#2563eb" />
+<title>Blessed CV</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="topbar no-print">
+  <div class="brand">
+    <span class="logo">✦</span>
+    <strong>Blessed CV</strong>
+  </div>
+  <div class="toolbar">
+    <label class="ctrl">
+      Template
+      <select id="tpl">
+        <option value="classic">Classic</option>
+        <option value="modern">Modern</option>
+        <option value="compact">Compact</option>
+      </select>
+    </label>
+    <label class="ctrl">
+      Font
+      <select id="font">
+        <option value="sans">Sans</option>
+        <option value="serif">Serif</option>
+      </select>
+    </label>
+    <label class="ctrl">
+      Color
+      <input type="color" id="accent" value="#2563eb" />
+    </label>
+    <button id="btn-pdf" class="btn primary" title="In the print dialog choose 'Save as PDF' and turn off 'Headers and footers' for a clean export.">Download PDF</button>
+    <button id="btn-export" class="btn">Backup JSON</button>
+    <button id="btn-import" class="btn">Restore</button>
+    <button id="btn-new" class="btn">New</button>
+    <input type="file" id="file-import" accept="application/json" hidden />
+    <span id="save-status" class="save-status">Saved</span>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="editor no-print" id="editor"></section>
+  <section class="preview-wrap">
+    <div class="page" id="preview"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
