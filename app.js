@@ -489,11 +489,46 @@ function bindToolbar() {
   };
 }
 
+/* ---------- Mobile view switch + preview scaling ---------- */
+
+const MOBILE_MAX = 920;
+const PAGE_W_PX = (210 / 25.4) * 96; // A4 width at 96dpi
+
+function isMobile() { return window.innerWidth <= MOBILE_MAX; }
+
+function fitPreview() {
+  const root = document.documentElement;
+  if (!isMobile()) { root.style.setProperty("--mscale", "1"); return; }
+  const wrap = document.querySelector(".preview-wrap");
+  const avail = wrap.clientWidth || window.innerWidth;
+  if (!avail) return;
+  const scale = Math.max(0.2, Math.min(1, (avail - 16) / PAGE_W_PX));
+  root.style.setProperty("--mscale", scale.toFixed(4));
+}
+
+function setView(showPreview) {
+  document.body.classList.toggle("show-preview", showPreview);
+  document.getElementById("mtab-edit").classList.toggle("active", !showPreview);
+  document.getElementById("mtab-prev").classList.toggle("active", showPreview);
+  if (showPreview) requestAnimationFrame(fitPreview);
+  window.scrollTo(0, 0);
+}
+
+function bindMobile() {
+  document.getElementById("mtab-edit").onclick = () => setView(false);
+  document.getElementById("mtab-prev").onclick = () => setView(true);
+  let t;
+  window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(fitPreview, 120); });
+  window.addEventListener("orientationchange", () => setTimeout(fitPreview, 200));
+}
+
 /* ---------- Init ---------- */
 
 bindToolbar();
+bindMobile();
 renderEditor();
 renderPreview();
+fitPreview();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));

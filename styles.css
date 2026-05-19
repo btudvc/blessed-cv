@@ -428,9 +428,98 @@ html, body {
   }
 }
 
-@media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; height: auto; }
-  .editor { border-right: none; border-bottom: 1px solid var(--line); }
-  .preview-wrap { padding: 18px; }
-  .page { width: 100%; min-height: auto; }
+/* ---------- Mobile view switch ---------- */
+.mtabs { display: none; }
+
+@media (max-width: 920px) {
+  .topbar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .toolbar {
+    gap: 10px;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+  .toolbar::-webkit-scrollbar { display: none; }
+  .ctrl { flex-shrink: 0; }
+  .btn { flex-shrink: 0; }
+  .save-status { display: none; }
+
+  .mtabs {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 9;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  .mtab {
+    flex: 1;
+    padding: 11px;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    color: var(--muted);
+    border-radius: 9px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .mtab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: calc(100vh - 60px);
+  }
+  body.show-preview .layout { min-height: 0; }
+  .editor {
+    border-right: none;
+    padding: 18px 16px calc(env(safe-area-inset-bottom) + 28px);
+  }
+  .preview-wrap {
+    padding: 18px 0 calc(env(safe-area-inset-bottom) + 28px);
+    overflow-x: hidden;
+  }
+
+  /* one pane at a time, driven by body class */
+  .preview-wrap { display: none; }
+  body.show-preview .editor { display: none; }
+  body.show-preview .preview-wrap { display: flex; }
+
+  /* iOS: >=16px input font prevents focus auto-zoom */
+  .field input, .field textarea,
+  .ctrl select, .ctrl input { font-size: 16px; }
+  .field input, .field textarea { padding: 12px 13px; }
+
+  /* bigger tap targets */
+  .btn { padding: 10px 15px; }
+  .item .mv { width: 34px; height: 32px; font-size: 13px; }
+  .item .del { padding: 7px 14px; font-size: 12px; }
+  .add-btn { padding: 14px; }
+  .group > summary { padding: 20px 2px; }
+
+  /* scale the A4 page to fit the screen (set by JS); zoom reflows layout
+     so there is no overflow or leftover whitespace to compensate for */
+  .page {
+    flex-shrink: 0;
+    width: 210mm;
+    zoom: var(--mscale, 1);
+  }
+}
+
+@media print {
+  .mtabs { display: none !important; }
+  .editor { display: none !important; }
+  .preview-wrap { display: flex !important; padding: 0 !important; }
+  .page { zoom: 1 !important; }
 }
