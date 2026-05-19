@@ -233,10 +233,11 @@ function renderEditor() {
       listEditor(b, cv.education,
         [
           { row: [{ label: "School", key: "school" }, { label: "Degree", key: "degree" }] },
-          { row: [{ label: "Field", key: "field" }, { label: "Years", key: "years" }] },
+          { row: [{ label: "Field", key: "field" }, { label: "GPA", key: "gpa" }] },
+          { row: [{ label: "Start", key: "start" }, { label: "End", key: "end" }] },
           { label: "Description", key: "description", opts: { area: true, rows: 3 } },
         ],
-        () => ({ school: "", degree: "", field: "", years: "", description: "" })
+        () => ({ school: "", degree: "", field: "", gpa: "", start: "", end: "", description: "" })
       )
     )
   );
@@ -357,15 +358,22 @@ function renderPreview() {
         ${e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : ""}
       </div>`)}</section>` : "";
 
-  const edu = cv.education.length ? `<section><h2>Education</h2>${entriesHTML(cv.education, (e) => `
+  const edu = cv.education.length ? `<section><h2>Education</h2>${entriesHTML(cv.education, (e) => {
+      const sub = [
+        [e.degree, e.field].filter(Boolean).join(", "),
+        e.gpa ? `GPA: ${e.gpa}` : "",
+      ].filter(Boolean).map(esc).join(" · ");
+      const date = [e.start, e.end].filter(Boolean).join(" – ") || e.years || "";
+      return `
       <div class="entry">
         <div class="entry-head">
           <div><div class="entry-title">${esc(e.school)}</div>
-          <div class="entry-sub">${[e.degree, e.field].filter(Boolean).map(esc).join(", ")}</div></div>
-          <div class="entry-date">${esc(e.years)}</div>
+          <div class="entry-sub">${sub}</div></div>
+          <div class="entry-date">${esc(date)}</div>
         </div>
         ${e.description ? `<div class="entry-desc">${esc(e.description)}</div>` : ""}
-      </div>`)}</section>` : "";
+      </div>`;
+    })}</section>` : "";
 
   const proj = cv.projects.length ? `<section><h2>Projects</h2>${entriesHTML(cv.projects, (e) => `
       <div class="entry">
