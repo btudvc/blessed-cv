@@ -369,6 +369,11 @@ body.menu-open .menu-btn span:nth-child(3) { transform: translateY(-6px) rotate(
   flex-wrap: wrap;
   gap: 4px 14px;
 }
+.cv .details {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #64748b;
+}
 .cv section { margin-top: 20px; }
 .cv h2 {
   font-size: 14px;
@@ -424,7 +429,9 @@ body.menu-open .menu-btn span:nth-child(3) { transform: translateY(-6px) rotate(
 .page[data-tpl="modern"] .main { padding: 16mm 14mm; }
 .page[data-tpl="modern"] .main h1,
 .page[data-tpl="modern"] .main > .role,
-.page[data-tpl="modern"] .main > .contact { display: none; }
+.page[data-tpl="modern"] .main > .contact,
+.page[data-tpl="modern"] .main > .details { display: none; }
+.page[data-tpl="modern"] .side .details { color: #dbeafe; }
 
 /* Compact template */
 .page[data-tpl="compact"] .cv { padding: 12mm 14mm; font-size: 12px; }
@@ -437,6 +444,16 @@ body.menu-open .menu-btn span:nth-child(3) { transform: translateY(-6px) rotate(
   color: var(--muted);
   font-size: 13px;
   margin-top: 10px;
+}
+.note-hint {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--accent) 5%, #fff);
+  border: 1px solid var(--line);
+  border-radius: 9px;
 }
 
 /* ---------- Print ---------- */

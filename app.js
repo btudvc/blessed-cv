@@ -3,15 +3,18 @@
 const STORE_KEY = "blessed-cv-data-v1";
 
 const blank = () => ({
-  personal: { fullName: "", title: "", email: "", phone: "", location: "", website: "", summary: "", photo: "" },
+  personal: { fullName: "", title: "", email: "", phone: "", location: "", website: "", summary: "", photo: "", military: "", license: "" },
   experience: [],
   education: [],
   skills: [],
   languages: [],
   projects: [],
   certifications: [],
+  courses: [],
   awards: [],
   references: [],
+  interests: [],
+  notes: [],
   settings: { template: "classic", font: "sans", accent: "#2563eb" },
 });
 
@@ -210,6 +213,11 @@ function renderEditor() {
       r2.appendChild(textField("Location", p.location, (v) => (p.location = v)));
       r2.appendChild(textField("Web / LinkedIn", p.website, (v) => (p.website = v)));
       b.appendChild(r2);
+      const r3 = document.createElement("div");
+      r3.className = "row2";
+      r3.appendChild(textField("Military Service", p.military, (v) => (p.military = v)));
+      r3.appendChild(textField("Driver's License", p.license, (v) => (p.license = v)));
+      b.appendChild(r3);
       b.appendChild(textField("Summary", p.summary, (v) => (p.summary = v), { area: true, rows: 4 }));
     })
   );
@@ -287,6 +295,18 @@ function renderEditor() {
   );
 
   root.appendChild(
+    makeGroup("Courses & Trainings", false, (b) =>
+      listEditor(b, cv.courses,
+        [
+          { row: [{ label: "Course", key: "name" }, { label: "Provider", key: "provider" }] },
+          { row: [{ label: "Year", key: "year" }] },
+        ],
+        () => ({ name: "", provider: "", year: "" })
+      )
+    )
+  );
+
+  root.appendChild(
     makeGroup("Awards", false, (b) =>
       listEditor(b, cv.awards,
         [
@@ -309,6 +329,34 @@ function renderEditor() {
         () => ({ name: "", role: "", contact: "" })
       )
     )
+  );
+
+  root.appendChild(
+    makeGroup("Interests", false, (b) => {
+      b.appendChild(
+        textField("Interests (comma separated)", cv.interests.join(", "),
+          (v) => (cv.interests = v.split(",").map((s) => s.trim()).filter(Boolean)),
+          { area: true, rows: 2 }
+        )
+      );
+    })
+  );
+
+  root.appendChild(
+    makeGroup("Notes — Inbox (not on CV)", false, (b) => {
+      const hint = document.createElement("p");
+      hint.className = "note-hint";
+      hint.textContent =
+        "Jot down anything you remember. It is saved and included in JSON backup, but never printed on the CV. Tick “Added to CV” once you've moved it into the right section.";
+      b.appendChild(hint);
+      listEditor(b, cv.notes,
+        [
+          { label: "Note", key: "text", opts: { area: true, rows: 2 } },
+          { check: true, label: "Added to CV", key: "done" },
+        ],
+        () => ({ text: "", done: false })
+      );
+    })
   );
 }
 
@@ -339,11 +387,17 @@ function renderPreview() {
   const photo = p.photo
     ? `<div class="cv-photo" style="background-image:url('${p.photo}')"></div>` : "";
 
+  const details = [
+    p.military ? `Military service: ${p.military}` : "",
+    p.license ? `Driver's license: ${p.license}` : "",
+  ].filter(Boolean).map(esc).join(" · ");
+
   const head = `
     ${photo}
     <h1>${esc(p.fullName) || "Full Name"}</h1>
     ${p.title ? `<div class="role">${esc(p.title)}</div>` : ""}
-    ${contact ? `<div class="contact">${contact}</div>` : ""}`;
+    ${contact ? `<div class="contact">${contact}</div>` : ""}
+    ${details ? `<div class="details">${details}</div>` : ""}`;
 
   const summary = p.summary
     ? `<section><h2>Summary</h2><div class="summary">${esc(p.summary)}</div></section>` : "";
@@ -399,6 +453,18 @@ function renderPreview() {
         </div>
       </div>`)}</section>` : "";
 
+  const courses = cv.courses.length ? `<section><h2>Courses &amp; Trainings</h2>${entriesHTML(cv.courses, (c) => `
+      <div class="entry">
+        <div class="entry-head">
+          <div><div class="entry-title">${esc(c.name)}</div>
+          <div class="entry-sub">${esc(c.provider)}</div></div>
+          <div class="entry-date">${esc(c.year)}</div>
+        </div>
+      </div>`)}</section>` : "";
+
+  const interests = cv.interests.length
+    ? `<section><h2>Interests</h2><div class="langs">${cv.interests.map((x) => `<span>${esc(x)}</span>`).join("")}</div></section>` : "";
+
   const awards = cv.awards.length ? `<section><h2>Awards</h2>${entriesHTML(cv.awards, (a) => `
       <div class="entry">
         <div class="entry-head">
@@ -420,11 +486,11 @@ function renderPreview() {
 
   if (s.template === "modern") {
     el.innerHTML = `<div class="cv">
-      <aside class="side">${head}${skills}${langs}</aside>
-      <div class="main">${head}${hint}${summary}${exp}${edu}${proj}${certs}${awards}${refs}</div>
+      <aside class="side">${head}${skills}${langs}${interests}</aside>
+      <div class="main">${head}${hint}${summary}${exp}${edu}${proj}${certs}${courses}${awards}${refs}</div>
     </div>`;
   } else {
-    el.innerHTML = `<div class="cv">${head}${hint}${summary}${exp}${edu}${proj}${skills}${langs}${certs}${awards}${refs}</div>`;
+    el.innerHTML = `<div class="cv">${head}${hint}${summary}${exp}${edu}${proj}${skills}${langs}${certs}${courses}${awards}${refs}${interests}</div>`;
   }
 }
 
